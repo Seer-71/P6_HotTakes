@@ -1,7 +1,10 @@
 const express = require('express');   // Importe Express:
+const mongoose = require('mongoose'); // Importe mongoose:
+const path = require('path');         // Importe path:
+const helmet = require("helmet");
 const cors = require('cors')          // Importe cors:
-const mongoose = require('mongoose'); // Importe les dépendences:
-const path = require('path');
+const mongoSanitize = require('express-mongo-sanitize'); // Importe express-mongo-sanitize:
+
 //*******************   DEBUG TOOLS START  ********************** */
 // Logger http (les req et res) pour le dev uniquement:
 const morgan = require('morgan');
@@ -10,8 +13,17 @@ mongoose.set('debug', true);    // debug mongoose:
 
 require('dotenv').config(); // Importe donEnv:
 const app = express();
-app.use(cors());
+
 app.use(morgan('dev'));
+
+//************* securité:
+app.use(cors());
+app.use(helmet());
+app.use(mongoSanitize({
+  allowDots: true,
+  replaceWith: '_',
+}));
+//************************** */
 // Importe les routes:
 const saucesRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
